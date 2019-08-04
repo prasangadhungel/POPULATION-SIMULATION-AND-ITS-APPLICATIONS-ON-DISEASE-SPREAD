@@ -1,5 +1,7 @@
 import random
-from data.configuration import INFECTED_AT_START, INFECTION_PERIOD
+from data.configuration import INFECTED_AT_START, INFECTION_PERIOD, INFECTION_SPREAD
+import pandas as pd
+# import numpy as np 
 
 class Human(object):
     age = 0
@@ -20,7 +22,6 @@ class Human(object):
 
         self.world              = world
         self.id                 = kwargs['id']
-        self.infected           = kwargs['infected']
         self.familyId           = kwargs['familyId']
         try:
             self.x                  = kwargs['homeX']
@@ -84,6 +85,17 @@ class Human(object):
         except:
             self.infected           = random.random() < INFECTED_AT_START
         
+        try:
+            self.susceptibility = kwargs['susceptibility']
+        except:
+            try:
+                xx = [self.age, int(self.sex == 'Male'), self.education]
+                xx = np.array([xx])
+                self.susceptibility = netModel.predict(xx)[0][0]/1000000
+                #1000000
+            except:
+                self.susceptibility = random.random() < INFECTION_SPREAD
+
         try:
             self.infectionTime      = kwargs['infectionTime']
 

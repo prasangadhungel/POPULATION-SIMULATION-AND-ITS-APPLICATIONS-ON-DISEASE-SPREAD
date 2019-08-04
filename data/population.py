@@ -41,13 +41,15 @@ def generatePopulationfromFile(world, filename):
         population.append(Human(world, 
                                 age = df.loc[i, 'age'],
                                 id = i + 1,
+                                education = df.loc[i, 'education'],
                                 type = df.loc[i, 'type'],
                                 infected = df.loc[i, 'infected'],
                                 infectionTime = df.loc[i, 'infectionTime'],
                                 familyId = df.loc[i, 'familyId'],
                                 homeX = df.loc[i, 'homeX'],
                                 homeY = df.loc[i, 'homeY'],
-                                homeId = df.loc[i, 'homeId']))
+                                homeId = df.loc[i, 'homeId'],
+                                susceptibility = df.loc[i, 'susceptibility']))
     
     for person in population:
         if person.familyId not in [ids.id for ids in families]:
@@ -62,4 +64,3 @@ def generatePopulationfromFile(world, filename):
                     break
     
     return (population, families)
-    

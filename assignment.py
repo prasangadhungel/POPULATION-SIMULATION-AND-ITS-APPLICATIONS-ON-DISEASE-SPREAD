@@ -270,8 +270,8 @@ def generateRoads_and_RoadNodes(world):
 def generateRoads_and_RoadNodesFromFile(world, nodesFile, roadFile):
     roads=[]
     roadNodes=[]
-    dfnode = pd.read_csv('RoadNodes.csv')
-    dfroad = pd.read_csv('Roads.csv')
+    dfnode = pd.read_csv(nodesFile)
+    dfroad = pd.read_csv(roadFile)
     # plt.figure(figsize=(50, 50)) 
     for i in range(len(dfnode)):
         roadNodes.append(RoadNode(id = i + 1, x = dfnode.loc[i, 'x'], y = dfnode.loc[i, 'y']))

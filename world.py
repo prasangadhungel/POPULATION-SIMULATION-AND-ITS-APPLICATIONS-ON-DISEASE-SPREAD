@@ -27,8 +27,11 @@ class World(object):
         # Start with necessary parameters for the world
         self.time = 0
         # simulationParams= open("simulationparams.txt", 'r')       
-        self.population, self.families = generatePopulationfromFile(self, 'Population.csv')
-       
+              
+        self.buildings  = generateBuildingsfromFile(self, 'inputs/Buildings.csv')
+        self.visitables = [item.id for item in self.buildings if item.special]
+
+        self.population, self.families = generatePopulationfromFile(self, 'inputs/Population.csv')
         infectedcount = 0
         for item in self.population:
             if item.infected == True:   
@@ -36,10 +39,8 @@ class World(object):
 
         print("Total Population:", len(self.population))
         print("Infected Count At beginning: ", infectedcount)
-       
-        self.buildings  = generateBuildingsfromFile(self, 'Buildings.csv')
-        self.visitables = [item.id for item in self.buildings if item.special]
-       
+
+
         assignBuildings(self)
         # Completed processing buildings
         # Group people according to age into different age groups and assign them their own special buildings.
@@ -47,7 +48,7 @@ class World(object):
         self.schools = [item for item in self.buildings if  item.type == 'school']
         self.workplaces = [item for item in self.buildings if item.type == 'market']
 
-        self.roadNodes, self.roads = generateRoads_and_RoadNodesFromFile(self, 'RoadNodes.csv', 'Roads.csv')       
+        self.roadNodes, self.roads = generateRoads_and_RoadNodesFromFile(self, 'inputs/RoadNodes.csv', 'inputs/Roads.csv')       
         self.vehicles = generateVehicles(self)
        
         # DictionaryList  = []
@@ -55,12 +56,11 @@ class World(object):
         # for item in self.population:
         #     dict = {'familyId': item.familyId, 'homeId': item.homeId, 'schoolId': item.schoolId, 'workplaceId': item.workplaceId,  
         #             'age':item.age, 'sex': item.sex, 'infected':item.infected, 'infectionTime': item.infectionTime,
-        #             'type': item.type, 'education': item.education, 'homeX': item.homeX, 'homeY':item.homeY}
+        #             'type': item.type, 'education': item.education, 'homeX': item.homeX, 'homeY':item.homeY, 'susceptibility': item.susceptibility}
         #     Index.append(item.id)
         #     DictionaryList.append(dict)
         # df = pd.DataFrame(DictionaryList, index = Index)
-        # df.to_csv('Population.csv')
-        
+        # df.to_csv('inputs/Population.csv')
 
         # DictionaryList = []
         # Index = []
@@ -177,8 +177,9 @@ class World(object):
             exit(0)
 
         else:
-            with open('newlog/particlelog' +str(self.time) + '.json', 'w') as fp:
-                json.dump(outdict, fp)
+            # with open('newlog/particlelog' +str(self.time) + '.json', 'w') as fp:
+            #     json.dump(outdict, fp)
+            # time.sleep(1)
             self.simulate()
 
 if __name__ == "__main__":

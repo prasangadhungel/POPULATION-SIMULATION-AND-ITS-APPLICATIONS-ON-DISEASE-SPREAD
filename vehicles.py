@@ -115,7 +115,7 @@ class Vehicle(object):
             if item1.infected == True:
                 for item2 in self.passengers:
                     if item2.infected == False:
-                        item2.infected = random.random() < INFECTION_SPREAD
+                        item2.infected = (random.random() < item2.susceptibility)
 
     def update(self, world):
         self.interact()
