@@ -1,7 +1,7 @@
 from helpers import distance, findClosest
 import random
 import time
-from data.configuration import MAP_ROADS_COUNT, VEHICLES, MAP_MAX_X, MAP_MAX_Y
+from data.configuration import VEHICLES
 import matplotlib.pyplot as plt
 from road import RoadNode, Road
 from vehicles import Vehicle
@@ -24,9 +24,9 @@ def assignMarket(nodeList, world):
     minDistance = 1000000000
     minId       = 0
     for item in world.visitables:
-        dist = ((world.buildings[item - 1].x - nodeList[ran].x)**2 + (world.buildings[item - 1].y - nodeList[ran].y) ** 2) ** 0.5
+        dist = ((world.buildings[item].x - nodeList[ran].x)**2 + (world.buildings[item].y - nodeList[ran].y) ** 2) ** 0.5
         if dist < minDistance:
-            minId = world.buildings[item - 1].id
+            minId = world.buildings[item].id
             minDistance = dist
 
     return minId
@@ -268,37 +268,40 @@ def generateRoads_and_RoadNodes(world):
 
 
 def generateRoads_and_RoadNodesFromFile(world, nodesFile, roadFile):
-    roads=[]
-    roadNodes=[]
+    roads = {}
+    roadNodes={}
     dfnode = pd.read_csv(nodesFile)
     dfroad = pd.read_csv(roadFile)
     # plt.figure(figsize=(50, 50)) 
     for i in range(len(dfnode)):
-        roadNodes.append(RoadNode(id = i + 1, x = dfnode.loc[i, 'x'], y = dfnode.loc[i, 'y']))
+        roadNodes[dfnode.iloc[i, 0]] = RoadNode(id = dfnode.iloc[i, 0], x = dfnode.loc[i, 'x'], y = dfnode.loc[i, 'y'])
         # plt.scatter(dfnode.loc[i, 'x'], dfnode.loc[i, 'y'],s = 50, c = (0,1,0))
 
-
+    # roadcount = 0
     for i in range(len(dfroad)):
-        roads.append(Road(roadNodeList = [roadNodes[abc - 1] for abc in [int(item) for item in dfroad.loc[i, 'nodes'].strip('[]').split(', ')] ],
-                          id = i + 1))
-        
-    return roadNodes, roads        
+        if len([roadNodes[abc] for abc in [int(item) for item in dfroad.loc[i, 'nodes'].strip('[]').split(', ')] ]) > 25:
+            # roadcount += 1
+            roads[dfroad.iloc[i,0]] = Road(roadNodeList = [roadNodes[abc] for abc in [int(item) for item in dfroad.loc[i, 'nodes'].strip('[]').split(', ')] ],
+                              id = dfroad.iloc[i,0])
+    # print(roadcount)
+    # exit(0)
+    return roads        
 
 
 
 def generateVehicles(world):
     vehicles = []
     for i in range(VEHICLES):
-        randomroadID =  random.randint(1,len(world.roads))
+        randomroadID =  random.choice(list(world.roads.keys()))
         vehicle    = Vehicle(world, id = i + 1, roadId = randomroadID)
-        world.roads[randomroadID - 1].hasVehicle = True
+        world.roads[randomroadID].hasVehicle = True
         vehicles.append(vehicle)
         # plt.scatter(vehicle.x, vehicle.y, marker='^',s = 75,  c = (1,0,0))
     
     for road in world.roads:
-        if road.hasVehicle == False:
-            vehicle    = Vehicle(world, id = len(vehicles) + 1, roadId = road.id)
-            road.hasVehicle = True
+        if world.roads[road].hasVehicle == False and len(world.roads[road].nodes) > 60:
+            vehicle    = Vehicle(world, id = len(vehicles) + 1, roadId = world.roads[road].id)
+            world.roads[road].hasVehicle = True
             vehicles.append(vehicle)
     #         plt.scatter(vehicle.x, vehicle.y, marker='^',s = 75,  c = (1,0,0))
     

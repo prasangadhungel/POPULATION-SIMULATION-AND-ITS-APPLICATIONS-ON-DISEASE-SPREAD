@@ -24,7 +24,7 @@ def simulateWorking(world, entity):
                 entity.reachedDestination = False
                 entity.destinationTime = 0
                 print("Passenger added in", vehicleId, "at:", world.time, " for returning home")                        
-                entity.destination = world.buildings[entity.homeId - 1]
+                entity.destination = world.buildings[entity.homeId]
                 world.vehicles[vehicleId - 1].addPassenger(entity)                        
                 entity.isDelegated = True
                 entity.delegator = vehicleId
@@ -45,9 +45,9 @@ def simulateWorking(world, entity):
                     vehicleDist, vehicleId = assignVehicle(entity, world.vehicles)
                     # print(vehicleDist, entity.x, entity.y, world.vehicles[vehicleId - 1].x, world.vehicles[vehicleId - 1].y)
                     if vehicleDist < 50:
-                        MarketID = assignMarket(world.roads[world.vehicles[vehicleId -1].roadId - 1].nodes, world)
+                        MarketID = assignMarket(world.roads[world.vehicles[vehicleId -1].roadId].nodes, world)
                         # print("MarketID and VehicleID: ", MarketID, vehicleId)
-                        entity.destination = world.buildings[MarketID - 1]
+                        entity.destination = world.buildings[MarketID]
                         world.vehicles[vehicleId - 1].addPassenger(entity)
                         # print("Passenger added in", vehicleId, "at:", world.time, " enjoying holiday")      
                         # time.sleep(0.5)                  
@@ -64,8 +64,8 @@ def simulateWorking(world, entity):
             # student go to school
             vehicleDist, vehicleId = assignVehicle(entity, world.vehicles)
             if vehicleDist < 50:
-                SchoolID = assignSchool(world.roads[world.vehicles[vehicleId -1].roadId - 1].nodes, world)
-                entity.destination = world.buildings[SchoolID - 1]
+                SchoolID = assignSchool(world.roads[world.vehicles[vehicleId -1].roadId].nodes, world)
+                entity.destination = world.buildings[SchoolID]
                 # print("SchoolID and VehicleID: ", SchoolID, vehicleId)
                 print("Passenger added in", vehicleId, "at:", world.time, " for school")                                        
                 world.vehicles[vehicleId - 1].addPassenger(entity)                        
@@ -76,10 +76,10 @@ def simulateWorking(world, entity):
             # student go to school
             vehicleDist, vehicleId = assignVehicle(entity, world.vehicles)
             if vehicleDist < 50:
-                WorkPlaceID = assignWorkPlace(world.roads[world.vehicles[vehicleId -1].roadId - 1].nodes, world)
+                WorkPlaceID = assignWorkPlace(world.roads[world.vehicles[vehicleId -1].roadId].nodes, world)
                 # print("WorkPlace and VehicleID: ", WorkPlaceID, vehicleId)
                 print("Passenger added in", vehicleId, "at:", world.time, " for work")                        
-                entity.destination = world.buildings[WorkPlaceID - 1]
+                entity.destination = world.buildings[WorkPlaceID]
                 world.vehicles[vehicleId - 1].addPassenger(entity)                        
                 entity.isDelegated = True
                 entity.delegator = vehicleId
@@ -88,5 +88,6 @@ def simulateWorking(world, entity):
 
 behaviorTree = {
     "student": simulateWorking,
-    "working": simulateWorking
+    "working": simulateWorking,
+    "none": simulateWorking
 }

@@ -12,7 +12,7 @@ class Vehicle(object):
         """
         self.id             = kwargs["id"]            
         self.roadId         = kwargs['roadId']
-        curNode             = world.roads[self.roadId - 1].currentNode
+        curNode             = random.choice(world.roads[self.roadId].NodesList)
         self.x              = curNode.data.x
         self.y              = curNode.data.y
         self.world          = world

@@ -29,12 +29,10 @@ class Road(object):
         self.nodes = kwargs["roadNodeList"]
         self.id = kwargs["id"]
         self.hasVehicle = False
-        NodesList = []
+        self.NodesList = []
         for node in self.nodes:
-            NodesList.append(Node(node))
+            self.NodesList.append(Node(node))
         
-        for i in range(len(NodesList) - 1):
-            NodesList[i].next = NodesList[i + 1]
-            NodesList[i + 1].prev = NodesList[i]
-
-        self.currentNode = NodesList[random.randint(0, len(NodesList) -1)]
+        for i in range(len(self.NodesList) - 1):
+            self.NodesList[i].next = self.NodesList[i + 1]
+            self.NodesList[i + 1].prev = self.NodesList[i]

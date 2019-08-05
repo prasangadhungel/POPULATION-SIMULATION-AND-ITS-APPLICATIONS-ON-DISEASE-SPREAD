@@ -1,6 +1,6 @@
 import random
-from data.configuration import INFECTED_AT_START, INFECTION_PERIOD, INFECTION_SPREAD
-import pandas as pd
+# from data.configuration import INFECTED_AT_START, INFECTION_PERIOD, INFECTION_SPREAD
+# import pandas as pd
 # import numpy as np 
 
 class Human(object):
@@ -86,7 +86,7 @@ class Human(object):
             self.infected           = random.random() < INFECTED_AT_START
         
         try:
-            self.susceptibility = kwargs['susceptibility']
+            self.susceptibility = kwargs['susceptibility'] / 5
         except:
             try:
                 xx = [self.age, int(self.sex == 'Male'), self.education]

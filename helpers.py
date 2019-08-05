@@ -25,4 +25,4 @@ def updateAllVehicles(world):
 
 def buildingInteraction(world):
     for building in world.buildings:
-        building.interact()
+        world.buildings[building].interact()
