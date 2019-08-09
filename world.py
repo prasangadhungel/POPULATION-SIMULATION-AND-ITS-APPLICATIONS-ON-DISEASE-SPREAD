@@ -6,9 +6,21 @@ from data.population import generatePopulation, generatePopulationfromFile
 from data.places import generateBuildings, generateBuildingsfromFile
 from data.configuration import INFECTION_PERIOD
 import pandas as pd
+import numpy as np
+import os
+import errno
 
+
+
+simulationiteration = 0
+numberOfIteration   = 3
+numberOfTimeSteps   = 100
 visitedQueue = []
 SIMULATION_TIME_STEP = 1
+config_dictionary = {"map_image": "koniyosomMap.png", "iteration_count": numberOfIteration, "time_steps":numberOfTimeSteps}
+with open("config.json", 'w') as fp:
+    json.dump(config_dictionary, fp)
+
 class World(object):
     population = []
     vehicles   = []
@@ -27,11 +39,24 @@ class World(object):
         # Start with necessary parameters for the world
         self.time = 0
         # simulationParams= open("simulationparams.txt", 'r')       
-              
+        # self.maleInteraction = 0
+        # self.FemaleInteraction = 0
+        # self.educationInteraction = [0]*21
+        # for i in range(9):
+        #     self.educationInteraction[i] -= random.randint(200,500) 
+        # for i in range(11, 21):
+        #     self.educationInteraction[i] += i *random.randint(1,2) 
+
+        # self.ageInteraction =[0]*90
+        # for i in range(4):
+        #     self.ageInteraction[i] = 1000 + random.randint(1000,2000)
+        # self.ageInteraction[20] = 4000
+        # for i in range(52,90):
+        #     self.ageInteraction[i] = 1500 - 5 * i - random.randint(0,300)
         self.buildings  = generateBuildingsfromFile(self, 'real_input/Buildings.csv')
         self.visitables = [self.buildings[item].id for item in self.buildings if self.buildings[item].special]
 
-        self.population= generatePopulationfromFile(self, 'real_input/Population.csv')
+        self.population= generatePopulationfromFile(self, 'real_input/PopulationKoniyosom.csv')
         infectedcount = 0
         for item in self.population:
             if item.infected == True:   
@@ -115,23 +140,22 @@ class World(object):
         # plt.title('Roads = Line , RodeNodes = Circle, Vehicles= Red Triangle')    
         # plt.show()
 
-        self.simulate()
         
     def simulate(self):
-        plt.figure(figsize=(1000, 1000))      
+        # plt.figure(figsize=(1000, 1000))      
 
-        for road in self.roads:
-            for i in range(len(self.roads[road].nodes) - 1):
-                plt.plot((self.roads[road].nodes[i].x, self.roads[road].nodes[i + 1].x), (self.roads[road].nodes[i].y, self.roads[road].nodes[i + 1].y), c = 'blue', alpha = 0.5)
+        # for road in self.roads:
+        #     for i in range(len(self.roads[road].nodes) - 1):
+        #         plt.plot((self.roads[road].nodes[i].x, self.roads[road].nodes[i + 1].x), (self.roads[road].nodes[i].y, self.roads[road].nodes[i + 1].y), c = 'blue', alpha = 0.5)
 
-        for vehicl in self.vehicles:
-            plt.scatter(vehicl.x, vehicl.y, marker='^',s = 50,  c = 'green')
+        # for vehicl in self.vehicles:
+        #     plt.scatter(vehicl.x, vehicl.y, marker='^',s = 50,  c = 'green')
 
-        for vehicl in self.population:
-            if vehicl.infected == True:
-                plt.scatter(vehicl.x, vehicl.y, s = 1,  c = 'red', alpha=1)
+        # for vehicl in self.population:
+        #     if vehicl.infected == True:
+        #         plt.scatter(vehicl.x, vehicl.y, s = 1,  c = 'red', alpha=1)
 
-        plt.show()
+        # plt.show()
 
         if (self.time - 25) % (7 * 24)  == 0:
             print("Not saturday, workday starts")
@@ -149,30 +173,56 @@ class World(object):
 
         print("Time End:", self.time)
         infectedcount = 0
-        # outdict = {}
-        # Humansl = [{'infected': bool(item.infected), 'x': item.x, 'y': item.y, 'education':int(item.education), 'age':int(item.age), 'sex':item.sex} for item in self.population]        
-        # Vehiclel = [{'x': item.x, 'y': item.y, 'passengers': [ids.id for ids in item.passengers]} for item in self.vehicles]
-        # outdict = {'Human': Humansl, 'Vehicle':Vehiclel}
+        Humansl = [{'infected': bool(item.infected), 'x': item.x, 'y': item.y} for item in self.population]        
+        Vehiclel = [{'x': item.x, 'y': item.y, 'passengers': [ids.id for ids in item.passengers]} for item in self.vehicles]
+        outdict = {'Human': Humansl, 'Vehicle':Vehiclel}
         for item in self.population:            
             if item.infected == True:
                 item.infectionTime += 1
                 if item.infectionTime > INFECTION_PERIOD:
                     item.infected = False
-                    item.infectionTime = 0   
+                    item.infectionTime = 0
+                    item.hasBeenInfected = True
+                    item.susceptibility /= 200   
                 infectedcount += 1
         
         print("Infected Count: ", infectedcount)
         # time.sleep(0.2)
 
 
-        if self.time > 200:
-            exit(0)
+        if self.time > numberOfTimeSteps:
+            pass
 
         else:
-            # with open('log/particlelog' +str(self.time) + '.json', 'w') as fp:
-            #     json.dump(outdict, fp)
+            filename = "logs/iteration_count"+str(simulationiteration+1)+"/time_steps"+str(self.time)+".json"
+            if not os.path.exists(os.path.dirname(filename)):
+                try:
+                    os.makedirs(os.path.dirname(filename))
+                except OSError as exc: # Guard against race condition
+                    if exc.errno != errno.EEXIST:
+                        raise
+            
+            with open(filename, 'w') as fp:
+                json.dump(outdict, fp)
             time.sleep(0.5)
             self.simulate()
 
+    def analyse(self):
+        # print(self.maleInteraction, self.FemaleInteraction,self.educationInteraction,self.ageInteraction)
+        # numedu = [0]*21
+        # for item in self.population:
+        #     numedu[item.education] += 1
+
+        # numage = [1]*90
+        # for item in self.population:
+        #     numage[item.age] += 1
+
+        plt.bar(np.arange(len(numage)), [x/y for x, y in zip(self.ageInteraction, numage)],width=0.4, color = 'b',align='center')
+        plt.show()
+
 if __name__ == "__main__":
-    w = World()
+    for simulationiteration in range(numberOfIteration):
+        w = World()
+        w.simulate()
+        # w.analyse()
+

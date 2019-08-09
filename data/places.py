@@ -32,16 +32,16 @@ def generateBuildings(world):
     return buildings
         
 def generateBuildingsfromFile(world, filename):
-    buildings  = []
+    buildings  = {}
     df = pd.read_csv(filename)
     for i in range(len(df)):
         building = Building(world, 
-                        id = i + 1,
+                        id = df.iloc[i,0],
                         type = df.loc[i, 'type'],
                         x = df.loc[i, 'x'],
                         y = df.loc[i, 'y'], 
                         interaction_time = df.loc[i, 'interaction_time'],
                         special = df.loc[i, 'special'])
 
-        buildings.append(building)
+        buildings[df.iloc[i,0]] = building
     return buildings

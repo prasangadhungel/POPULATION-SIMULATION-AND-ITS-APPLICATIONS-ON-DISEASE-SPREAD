@@ -1,5 +1,6 @@
 import random
-from data.configuration import INFECTION_SPREAD
+import math
+from data.configuration import INFECTION_PERIOD
 
 class Building(object):
     """
@@ -56,7 +57,10 @@ class Building(object):
             if item1.infected == True:
                 for item2 in self.occupants:
                     if item2.infected == False:                
-                        item2.infected = (random.random() < item2.susceptibility) 
+                        item2.infected = (random.random() < item2.susceptibility / (1 + 10 * self.world.time  / ( 1 + math.exp(random.randint(40,50) - self.world.time)))) 
+                        if item2.infected:
+                            item2.infectionTime = random.randint(0, INFECTION_PERIOD/2)
+
 
     def setType(self, type):
         self.type = type

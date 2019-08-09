@@ -35,7 +35,6 @@ def generatePopulation(world):
 
 def generatePopulationfromFile(world, filename):
     population  = []
-    families    = []
     df = pd.read_csv(filename)
     for i in range(len(df)):
         population.append(Human(world, 
@@ -49,18 +48,7 @@ def generatePopulationfromFile(world, filename):
                                 homeX = df.loc[i, 'homeX'],
                                 homeY = df.loc[i, 'homeY'],
                                 homeId = df.loc[i, 'homeId'],
-                                susceptibility = df.loc[i, 'susceptibility']))
+                                susceptibility = df.loc[i, 'susceptibility'] / 5 ))
     
-    for person in population:
-        if person.familyId not in [ids.id for ids in families]:
-            fam = Family(world, size = 1, id = person.familyId, x = person.x, y = person.y)
-            fam.addOccupants(person.id)
-            families.append(fam)
-        else:
-            for i in range(len(families)):
-                if person.familyId == families[i].id:
-                    families[i].size += 1
-                    families[i].addOccupants(person.id)
-                    break
     
-    return (population, families)
+    return population

@@ -17,13 +17,13 @@ def simulateWorking(world, entity):
     if entity.reachedDestination == True and entity.destination.special == True:
         entity.destinationTime += 1
         if  entity.destinationTime > entity.destination.interaction_time and entity.isDelegated == False:
-            print("Finished work, returning home")
+            # print("Finished work, returning home")
             # time.sleep(0.1)
             vehicleDist, vehicleId = assignVehicle(entity, world.vehicles)
             if vehicleDist < 50:
                 entity.reachedDestination = False
                 entity.destinationTime = 0
-                print("Passenger added in", vehicleId, "at:", world.time, " for returning home")                        
+                # print("Passenger added in", vehicleId, "at:", world.time, " for returning home")                        
                 entity.destination = world.buildings[entity.homeId]
                 world.vehicles[vehicleId - 1].addPassenger(entity)                        
                 entity.isDelegated = True
@@ -67,7 +67,7 @@ def simulateWorking(world, entity):
                 SchoolID = assignSchool(world.roads[world.vehicles[vehicleId -1].roadId].nodes, world)
                 entity.destination = world.buildings[SchoolID]
                 # print("SchoolID and VehicleID: ", SchoolID, vehicleId)
-                print("Passenger added in", vehicleId, "at:", world.time, " for school")                                        
+                # print("Passenger added in", vehicleId, "at:", world.time, " for school")                                        
                 world.vehicles[vehicleId - 1].addPassenger(entity)                        
                 entity.isDelegated = True
                 entity.delegator = vehicleId
@@ -78,7 +78,7 @@ def simulateWorking(world, entity):
             if vehicleDist < 50:
                 WorkPlaceID = assignWorkPlace(world.roads[world.vehicles[vehicleId -1].roadId].nodes, world)
                 # print("WorkPlace and VehicleID: ", WorkPlaceID, vehicleId)
-                print("Passenger added in", vehicleId, "at:", world.time, " for work")                        
+                # print("Passenger added in", vehicleId, "at:", world.time, " for work")                        
                 entity.destination = world.buildings[WorkPlaceID]
                 world.vehicles[vehicleId - 1].addPassenger(entity)                        
                 entity.isDelegated = True

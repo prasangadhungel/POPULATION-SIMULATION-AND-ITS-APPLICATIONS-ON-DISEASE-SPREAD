@@ -1,5 +1,6 @@
 import random
 # from data.configuration import INFECTED_AT_START, INFECTION_PERIOD, INFECTION_SPREAD
+from data.configuration import INFECTION_SPREAD_FACTOR
 # import pandas as pd
 # import numpy as np 
 
@@ -84,9 +85,11 @@ class Human(object):
             self.infected       = kwargs['infected'] 
         except:
             self.infected           = random.random() < INFECTED_AT_START
-        
+    
+        self.hasBeenInfected = self.infected
         try:
-            self.susceptibility = kwargs['susceptibility'] / 5
+            self.susceptibility = kwargs['susceptibility'] * INFECTION_SPREAD_FACTOR 
+                
         except:
             try:
                 xx = [self.age, int(self.sex == 'Male'), self.education]
@@ -95,7 +98,8 @@ class Human(object):
                 #1000000
             except:
                 self.susceptibility = random.random() < INFECTION_SPREAD
-
+        if self.hasBeenInfected:
+            self.susceptibility /= 200
         try:
             self.infectionTime      = kwargs['infectionTime']
 

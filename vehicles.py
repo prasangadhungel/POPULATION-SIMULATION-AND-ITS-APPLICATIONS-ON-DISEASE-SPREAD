@@ -1,6 +1,7 @@
 import random
-from data.configuration import INFECTION_SPREAD
+from data.configuration import INFECTION_SPREAD_FACTOR, INFECTION_PERIOD
 import time
+import math
 
 class Vehicle(object):
     """
@@ -76,7 +77,7 @@ class Vehicle(object):
             self.moving = False
             for item in self.passengers:
                 if ((item.destination.x - self.x)**2 + (item.destination.y - self.y) ** 2) ** 0.5 < 50:
-                    print("Human", item.id, "has reached destination")
+                    # print("Human", item.id, "has reached destination")
                     # time.sleep(1)
                     item.isDelegated = False
                     item.delegator = None
@@ -115,7 +116,9 @@ class Vehicle(object):
             if item1.infected == True:
                 for item2 in self.passengers:
                     if item2.infected == False:
-                        item2.infected = (random.random() < item2.susceptibility)
+                        item2.infected = (random.random() < item2.susceptibility / (1 + 10 * self.world.time  / ( 1 + math.exp(random.randint(40,50) - self.world.time))))
+                        if item2.infected:
+                            item2.infectionTime = random.randint(0, INFECTION_PERIOD/2)
 
     def update(self, world):
         self.interact()
