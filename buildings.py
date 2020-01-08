@@ -57,7 +57,7 @@ class Building(object):
             if item1.infected == True:
                 for item2 in self.occupants:
                     if item2.infected == False:                
-                        item2.infected = (random.random() < item2.susceptibility / (1 + 10 * self.world.time  / ( 1 + math.exp(random.randint(40,50) - self.world.time)))) 
+                        item2.infected = ( 2 * random.random() < item2.susceptibility / (1 + 5 * self.world.time  / ( 1 + math.exp(random.randint(70,100) - self.world.time)))) 
                         if item2.infected:
                             item2.infectionTime = random.randint(0, INFECTION_PERIOD/2)
 

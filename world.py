@@ -10,11 +10,12 @@ import numpy as np
 import os
 import errno
 
-
+outputs = []
+infection_counts = []
 
 simulationiteration = 0
-numberOfIteration   = 3
-numberOfTimeSteps   = 100
+numberOfIteration   = 5
+numberOfTimeSteps   = 160
 visitedQueue = []
 SIMULATION_TIME_STEP = 1
 config_dictionary = {"map_image": "koniyosomMap.png", "iteration_count": numberOfIteration, "time_steps":numberOfTimeSteps}
@@ -156,14 +157,13 @@ class World(object):
         #         plt.scatter(vehicl.x, vehicl.y, s = 1,  c = 'red', alpha=1)
 
         # plt.show()
-
         if (self.time - 25) % (7 * 24)  == 0:
             print("Not saturday, workday starts")
             for items in self.population:
                 items.checked = False
 
         self.time += SIMULATION_TIME_STEP
-        updateAllVehicles(self)
+        updateAllVehicles(self)            
         buildingInteraction(self)
 
         for entity in self.population:
@@ -174,7 +174,7 @@ class World(object):
         print("Time End:", self.time)
         infectedcount = 0
         Humansl = [{'infected': bool(item.infected), 'x': item.x, 'y': item.y} for item in self.population]        
-        Vehiclel = [{'x': item.x, 'y': item.y, 'passengers': [ids.id for ids in item.passengers]} for item in self.vehicles]
+        Vehiclel = [{'x': item.x, 'y': item.y} for item in self.vehicles]
         outdict = {'Human': Humansl, 'Vehicle':Vehiclel}
         for item in self.population:            
             if item.infected == True:
@@ -185,8 +185,9 @@ class World(object):
                     item.hasBeenInfected = True
                     item.susceptibility /= 200   
                 infectedcount += 1
-        
+        infection_counts.append(infectedcount)
         print("Infected Count: ", infectedcount)
+        
         # time.sleep(0.2)
 
 
@@ -208,6 +209,7 @@ class World(object):
             self.simulate()
 
     def analyse(self):
+        pass
         # print(self.maleInteraction, self.FemaleInteraction,self.educationInteraction,self.ageInteraction)
         # numedu = [0]*21
         # for item in self.population:
@@ -217,12 +219,17 @@ class World(object):
         # for item in self.population:
         #     numage[item.age] += 1
 
-        plt.bar(np.arange(len(numage)), [x/y for x, y in zip(self.ageInteraction, numage)],width=0.4, color = 'b',align='center')
-        plt.show()
+        # plt.bar(np.arange(len(numage)), [x/y for x, y in zip(self.ageInteraction, numage)],width=0.4, color = 'b',align='center')
+        # plt.show()
+
 
 if __name__ == "__main__":
     for simulationiteration in range(numberOfIteration):
         w = World()
         w.simulate()
+        outputs.append({"runLabel": str(simulationiteration), "data":infection_counts})
+        infection_counts = []
+        with open("multirun.js", 'w') as fp:
+            fp.write("var outputs = "+ str(outputs))
         # w.analyse()
 
