@@ -4,11 +4,14 @@ using namespace std;
 
 float screenwidth = 1300.0;
 float screenheight = 700.0;
+// float subwidth  = 300;
+// float subheight  = 200;
+// float subx = 1000;
+// float suby  = 150;
 float mapwidth = 800;
 float mapheight = 550;
-float graphwidth = 300.0;
-float graphheight = 200.0;
-int numOfIteration = 5;
+float graphwidth = 445;
+float graphheight = 300.0;
 int iteration = 1; 
 int steps = 1;
 int pause = 0;
@@ -17,7 +20,7 @@ map<unsigned int, pair<double, double> > mapNodes;
 map<unsigned int, pair<double, double> > roadNodes;
 map<unsigned int, vector<unsigned int> > maps;
 map<unsigned int, vector<unsigned int> > roads;
-
+map<unsigned int, unsigned int> numinfected;
 void putPixel(float a, float b){
     glVertex2i(a+30,b+30);
 }
@@ -195,7 +198,8 @@ void parseInfectedJson(){
             }
             if(strList[1] != "false,"){
                 glColor3f(1.0, 0.0, 0);
-                glPointSize(5);
+                numinfected[steps] += 1;
+                // glPointSize(5);
                 putPixel(atof(strList[3].c_str())  * mapwidth/1000.0, atof(strList[5].c_str()) * mapheight/1000.0);
             }
         }
@@ -284,6 +288,23 @@ void specialKeyFunction(int key, int x, int y) {
     glutPostRedisplay();
 }
 
+void drawGraph(){
+    glLineWidth(5);
+    glColor3f(0.0, 0.7, 1);
+    glBegin(GL_LINES);
+    putPixel(mapwidth + 5, screenheight - 310);
+    putPixel(mapwidth + 5, screenheight - 10);
+    putPixel(mapwidth + 4 , screenheight - 310);
+    putPixel(screenwidth - 50, screenheight - 310);
+    glEnd();
+    glColor3f(1.0, 0.8, 0);
+    glBegin(GL_LINE_STRIP);
+    for(int i = 1; i < steps; i++){
+        putPixel(mapwidth + 5 + ((i-1) * graphwidth)/steps  , screenheight - 310 + numinfected[i]*graphheight/300);
+    }
+    
+    glEnd();
+}
 
 
 void render(void){
@@ -293,8 +314,8 @@ void render(void){
     glLoadIdentity();
     gluOrtho2D(0,screenwidth, 0,screenheight);
     drawMap();
-    glPointSize(10);
-    parseVehicleJson();
+    // glPointSize(10);
+    // parseVehicleJson();
     glPointSize(4);
     parseUninfectedJson();
     glPointSize(6);
@@ -302,9 +323,24 @@ void render(void){
     if (steps < numOfTimeSteps && !pause){
         steps += 1;
     }
+    drawGraph();
     glFlush();
     glutSwapBuffers();
 }
+
+
+
+// void rendergraph(void){
+//     glClearColor(1.0, 1.0, 1.0, 0.0f);
+//     glClear(GL_COLOR_BUFFER_BIT);
+//     glMatrixMode(GL_PROJECTION);
+//     glLoadIdentity();
+//     gluOrtho2D(subx, subx + subwidth, suby, suby + subheight);
+//     drawGraph();
+//     glFlush();
+//     glutSwapBuffers();
+
+// }
 
 int main(int argc, char** argv) {
     InitializeMap();
@@ -315,9 +351,20 @@ int main(int argc, char** argv) {
     glutIdleFunc(render);
     glutKeyboardFunc(processNormalKeys);
     glutSpecialFunc(specialKeyFunction);
-    int subWindow = glutCreateSubWindow(mainWindow, screenwidth - graphwidth + 20,0, graphwidth, graphheight);
-    glutDisplayFunc(render);    
+
+    // int subWindow = glutCreateSubWindow(mainWindow, screenwidth - graphwidth + 20,0, graphwidth, graphheight);
+    // glutDisplayFunc(render);    
     // glutIdleFunc(render);
+
+    // glutInitWindowPosition(subx,suby);
+    // glutInitWindowSize(subwidth,subheight);
+    // int subwindow =  glutCreateWindow("Graph");
+    // glutDisplayFunc(render);
+    // glutIdleFunc(render);
+    // glutKeyboardFunc(processNormalKeys);
+    // glutSpecialFunc(specialKeyFunction);
+
+
     glutMainLoop();
     return 0;
 }
