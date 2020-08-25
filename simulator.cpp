@@ -9,13 +9,14 @@ float screenheight = 700.0;
 // float subx = 1000;
 // float suby  = 150;
 float mapwidth = 800;
-float mapheight = 550;
-float graphwidth = 445;
-float graphheight = 300.0;
+float mapheight = 530;
+float graphwidth = 400;
+float graphheight = 290.0;
 int iteration = 1; 
 int steps = 1;
 int pause = 0;
 int numOfTimeSteps = 160;
+string str = "Active Cases";
 map<unsigned int, pair<double, double> > mapNodes;
 map<unsigned int, pair<double, double> > roadNodes;
 map<unsigned int, vector<unsigned int> > maps;
@@ -240,7 +241,7 @@ void drawMap(){
     }
 }
 
-int initWindow(int *argc, char **argv, int x, int y, int xsize, int ysize, const std::string &s){
+int     initWindow(int *argc, char **argv, int x, int y, int xsize, int ysize, const std::string &s){
     glutInit(argc, argv);
     glutInitDisplayMode(GLUT_RGB);
     glutInitWindowPosition(x,y);
@@ -252,6 +253,7 @@ void putpixel(int x, int y, float r, float g, float b){
     glColor3f(r, g, b);
     putPixel(x, y);
 }
+
 
 void exitWindow(){
     glEnd();
@@ -288,22 +290,37 @@ void specialKeyFunction(int key, int x, int y) {
     glutPostRedisplay();
 }
 
+void renderBitmapString(float x, float y, void *font,const char *string){
+    const char *c;
+    glRasterPos2f(x, y);
+    for (c=string; *c != '\0'; c++) {
+        glutBitmapCharacter(font, *c);
+    }
+} 
+
+
 void drawGraph(){
     glLineWidth(5);
     glColor3f(0.0, 0.7, 1);
     glBegin(GL_LINES);
-    putPixel(mapwidth + 5, screenheight - 310);
-    putPixel(mapwidth + 5, screenheight - 10);
-    putPixel(mapwidth + 4 , screenheight - 310);
-    putPixel(screenwidth - 50, screenheight - 310);
+    putPixel(mapwidth + 15, screenheight - 320);
+    putPixel(mapwidth + 15, screenheight - 50);
+    putPixel(mapwidth + 14 , screenheight - 320);
+    putPixel(screenwidth - 90, screenheight - 320);
     glEnd();
     glColor3f(1.0, 0.8, 0);
     glBegin(GL_LINE_STRIP);
     for(int i = 1; i < steps; i++){
-        putPixel(mapwidth + 5 + ((i-1) * graphwidth)/steps  , screenheight - 310 + numinfected[i]*graphheight/300);
+        putPixel(mapwidth + 15 + ((i-1) * graphwidth)/steps  , screenheight - 320 + numinfected[i]*graphheight/300);
     }
-    
+    glColor3f(0.0, 0.0, 0.0);
     glEnd();
+    renderBitmapString(mapwidth  + 25 + ((steps - 2) * graphwidth)/steps  , screenheight - 305 ,GLUT_BITMAP_9_BY_15,to_string(steps).c_str());
+    renderBitmapString(1243,405,GLUT_BITMAP_9_BY_15,"Days->");
+    renderBitmapString(730,670,GLUT_BITMAP_9_BY_15,str.c_str());
+    glColor3f(1.0,0.0,0.0);
+    renderBitmapString(mapwidth + 25 + ((steps-2) * graphwidth)/steps , screenheight - 300 + numinfected[steps - 1]*graphheight/300,GLUT_BITMAP_9_BY_15,to_string(numinfected[steps - 1]).c_str());
+    
 }
 
 
@@ -313,6 +330,7 @@ void render(void){
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluOrtho2D(0,screenwidth, 0,screenheight);
+
     drawMap();
     // glPointSize(10);
     // parseVehicleJson();
@@ -341,6 +359,7 @@ void render(void){
 //     glutSwapBuffers();
 
 // }
+
 
 int main(int argc, char** argv) {
     InitializeMap();
