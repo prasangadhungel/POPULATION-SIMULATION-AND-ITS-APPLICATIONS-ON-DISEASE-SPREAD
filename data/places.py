@@ -10,26 +10,7 @@ from data.configuration import *
 
 from numpy import vstack,array
 from numpy.random import rand
-from scipy.cluster.vq import kmeans,vq
 
-def generateBuildings(world):
-    locations = []
-    for family in world.families:
-        locations.append([family.x, family.y])
-
-    buildings  = []
-    toGen = len(world.families) / 4
-    print(toGen)
-    centroids, _ = kmeans(locations, toGen)
-    for coord in centroids:
-        isSpecial = random.random() < 0.10
-        building = ()
-        if not isSpecial:
-            building = Building(world, id = len(buildings)+1, x=coord[0], y=coord[1])
-        else:
-            building = Building(world, special = True, id = len(buildings)+1, x=coord[0], y=coord[1], interaction_time=random.randint(3, 6))
-        buildings.append(building)
-    return buildings
         
 def generateBuildingsfromFile(world, filename):
     buildings  = {}

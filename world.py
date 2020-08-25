@@ -1,12 +1,10 @@
 from bt import *
 import json
 import pickle
-from matplotlib import pyplot as plt
 from data.population import generatePopulation, generatePopulationfromFile
-from data.places import generateBuildings, generateBuildingsfromFile
+from data.places import generateBuildingsfromFile
 from data.configuration import INFECTION_PERIOD
 import pandas as pd
-import numpy as np
 import os
 import errno
 
@@ -77,86 +75,9 @@ class World(object):
         self.roads = generateRoads_and_RoadNodesFromFile(self, 'real_input/RoadNodes.csv', 'real_input/Roads.csv')       
         self.vehicles = generateVehicles(self)
        
-        # DictionaryList  = []
-        # Index = []
-        # for item in self.population:
-        #     dict = {'familyId': item.familyId, 'homeId': item.homeId, 'schoolId': item.schoolId, 'workplaceId': item.workplaceId,  
-        #             'age':item.age, 'sex': item.sex, 'infected':item.infected, 'infectionTime': item.infectionTime,
-        #             'type': item.type, 'education': item.education, 'homeX': item.homeX, 'homeY':item.homeY, 'susceptibility': item.susceptibility}
-        #     Index.append(item.id)
-        #     DictionaryList.append(dict)
-        # df = pd.DataFrame(DictionaryList, index = Index)
-        # df.to_csv('inputs/Population.csv')
-
-        # DictionaryList = []
-        # Index = []
-        # for item in self.roads:
-        #     nodelis = [ids.id for ids in item.nodes]
-        #     dict = {'nodes': str(nodelis)}
-        #     DictionaryList.append(dict)
-        #     Index.append(item.id)
-
-        # df = pd.DataFrame(DictionaryList, index = Index)
-        # df.to_csv('Roads.csv')
-        # DictionaryList = []
-        # Index = []
-        # for item in self.roadNodes:
-        #     dict = {'x': item.x, 'y':item.y}
-        #     DictionaryList.append(dict)
-        #     Index.append(item.id)
-
-        # df = pd.DataFrame(DictionaryList, index = Index)
-        # df.to_csv('RoadNodes.csv')
-        
-        # DictionaryList = []
-        # Index = []
-        # for item in self.buildings:
-        #     occupantsids = [ids.id for ids in item.occupants]
-        #     dict = {'special': item.special, 'type':item.type, 'interaction_time':item.interaction_time, 'x':item.x, 'y':item.y,
-        #             'occupants': str(occupantsids)}
-        #     DictionaryList.append(dict)
-        #     Index.append(item.id)
-
-        # df = pd.DataFrame(DictionaryList, index = Index)
-        # df.to_csv('Buildings.csv')
-        # exit(0)
-        # Feature assignment has already been done. We just need to start the simulation.
-        # plt.figure(figsize=(50, 50))      
-        # for item in self.roadNodes:
-        #     plt.scatter(item.x, item.y, s = 100, c = (0,1,0), alpha = 0.5)   
-
-        # for road in self.roads:
-        #     for i in range(len(road.nodes) - 1):
-        #         plt.plot((road.nodes[i].x, road.nodes[i + 1].x), (road.nodes[i].y, road.nodes[i + 1].y), c = (0,0,1), alpha = 0.5)
-
-        # for vehicl in self.vehicles:
-        #     plt.scatter(vehicl.x, vehicl.y, marker='^',s = 75,  c = (0,1,1), alpha=0.5)
-
-        # for vehicl in self.population:
-        #     if vehicl.infected == True:
-        #         plt.scatter(vehicl.x, vehicl.y, s = 1,  c = (1,0,0), alpha=1)
-        #     else:
-        #         plt.scatter(vehicl.x, vehicl.y, s = 1,  c = (1,1,0), alpha=1)
-
-        # plt.title('Roads = Line , RodeNodes = Circle, Vehicles= Red Triangle')    
-        # plt.show()
 
         
     def simulate(self):
-        # plt.figure(figsize=(1000, 1000))      
-
-        # for road in self.roads:
-        #     for i in range(len(self.roads[road].nodes) - 1):
-        #         plt.plot((self.roads[road].nodes[i].x, self.roads[road].nodes[i + 1].x), (self.roads[road].nodes[i].y, self.roads[road].nodes[i + 1].y), c = 'blue', alpha = 0.5)
-
-        # for vehicl in self.vehicles:
-        #     plt.scatter(vehicl.x, vehicl.y, marker='^',s = 50,  c = 'green')
-
-        # for vehicl in self.population:
-        #     if vehicl.infected == True:
-        #         plt.scatter(vehicl.x, vehicl.y, s = 1,  c = 'red', alpha=1)
-
-        # plt.show()
         if (self.time - 25) % (7 * 24)  == 0:
             print("Not saturday, workday starts")
             for items in self.population:
@@ -219,8 +140,6 @@ class World(object):
         # for item in self.population:
         #     numage[item.age] += 1
 
-        # plt.bar(np.arange(len(numage)), [x/y for x, y in zip(self.ageInteraction, numage)],width=0.4, color = 'b',align='center')
-        # plt.show()
 
 
 if __name__ == "__main__":

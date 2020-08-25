@@ -2,7 +2,6 @@ from helpers import distance, findClosest
 import random
 import time
 from data.configuration import VEHICLES
-import matplotlib.pyplot as plt
 from road import RoadNode, Road
 from vehicles import Vehicle
 import pandas as pd
@@ -192,12 +191,10 @@ def generateRoadNodes(world):
 def generateRoads_and_RoadNodes(world):
     roads=[]
     roadNodes=[]
-    plt.figure(figsize=(50, 50)) 
     print("World visitables:", len(world.visitables)) 
     for item in world.visitables:
         building = world.buildings[item - 1]
         n = RoadNode(id = len(roadNodes) + 1, x=building.x, y=building.y)
-        plt.scatter(building.x, building.y, s = 100, c = (0,1,0))
         roadNodes.append(n)
 
     for _ in range(MAP_ROADS_COUNT):
@@ -222,12 +219,8 @@ def generateRoads_and_RoadNodes(world):
                     minDist= dist
             nextNode.connected = True
             road.append(nextNode)
-            plt.plot((firstNode.x, nextNode.x), (firstNode.y, nextNode.y), c = (0,0,1))
             firstNode = nextNode
         
-        # if len(road) > 0:
-            # plt.plot((road[0].x, road[-1].x), (road[0].y, road[-1].y), c = (0,0,1))
-            # road.append(road[0])
         
         roads.append(Road(roadNodeList = road, id = len(roads) + 1))
     
@@ -255,7 +248,6 @@ def generateRoads_and_RoadNodes(world):
                             minDist= dist
                     nextNode.connected = True
                     road.append(nextNode)
-                    plt.plot((firstNode.x, nextNode.x), (firstNode.y, nextNode.y), c = (0,0,1))
                     firstNode = nextNode
                 
                 # if len(road) > 0:
